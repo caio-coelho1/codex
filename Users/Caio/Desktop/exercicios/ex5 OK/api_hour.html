@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+</head>
+<style type="text/css">
+	body{
+		background: #ADD8E6;
+	}
+</style>
+<body>
+	<center>
+		<h1>Real Time</h1>
+		<h2 id="date"></h2>
+		<h2 id="hour"></h2>
+		<h2 id="date-local"></h2>
+		<h2 id="hour-local"></h2>
+	</center>
+</body>
+<script type="text/javascript">
+	async function getHour(){
+		await fetch('http://worldclockapi.com/api/json/utc/now')
+  		.then(function (response){
+      		response.json()
+        		.then(function(r){
+            		let hora = r.currentDateTime.split('T');
+            		hora[1] = hora[1].replace('Z','');
+            		let date = document.getElementById('date');
+            		date.innerText = "UTC: " + hora[0];
+            		let hour = document.getElementById('hour');
+            		let hourlocal = document.getElementById('hour-local');
+            		let datelocal = document.getElementById('date-local');
+            		let datalocal_convertida = hora[0].split('-').reverse().join('/');
+            		var date_ptbrl = new Date(r.currentDateTime);
+            		date_ptbrl = date_ptbrl.toLocaleString().split(',');
+            		hour.innerText = "UTC: " + hora[1];
+            		hourlocal.innerText = "Hour Local "+ date_ptbrl[1];  
+            		datelocal.innerText = "Date Local " + date_ptbrl[0];   
+    		});
+		});
+	}
+
+	getHour();
+
+function teste(){
+	setInterval(getHour, 1000);
+}
+
+teste();
+	
+</script>
+</html>

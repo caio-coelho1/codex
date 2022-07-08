@@ -1,0 +1,1 @@
+para executar só realizar o download do arquivo api_hour e executar.

@@ -1,0 +1,77 @@
+
+/*
+Online Java - IDE, Code Editor, Compiler
+
+Online Java is a quick and easy tool that helps you to build, compile, test your programs online.
+*/
+
+import  java.util.*; 
+public class Main
+{
+    public static boolean valida_cnpj (String cnpj){
+            String digitos = cnpj.substring(12);
+            String cnpj_sem_digito = cnpj.substring(0,12);
+            char[] cnpj_array = cnpj_sem_digito.toCharArray();
+            int peso = 2;
+            int multiplicado = 0;
+            int total = 0;
+            for (int i = cnpj_array.length; i > 0; i--) {
+                int valor = Character.getNumericValue(cnpj_array[i-1]);
+                multiplicado = valor * peso;
+                peso++;
+                if(peso == 10){
+                    peso = 2;
+                }
+                total = total + multiplicado;
+            }
+            int digito_one = total % 11;
+            if(digito_one == 0 || digito_one == 1){
+                digito_one = 0;
+            }else{
+                digito_one = 11 - digito_one;
+            }
+            char[] digitos_array = digitos.toCharArray();
+            peso = 3;
+            multiplicado = 0;        
+            total = Character.getNumericValue(digitos_array[0]) * 2;
+            for (int i = cnpj_array.length; i > 0; i--) {
+                int valor = Character.getNumericValue(cnpj_array[i-1]);
+                multiplicado = valor * peso;
+                peso++;
+                if(peso == 10){
+                    peso = 2;
+                }
+                total = total + multiplicado;
+            }
+            int digito_two = total % 11;
+            if(digito_two == 0 || digito_two == 1){
+                digito_two = 0;
+            }else{
+                digito_two = 11 - digito_two;
+            }
+            if(digito_one == Character.getNumericValue(digitos_array[0]) && digito_two == Character.getNumericValue(digitos_array[1])){
+                return true;
+            }else{
+                return false;
+            }
+
+    }
+    
+    public static void main(String[] args) {
+        Scanner sc=  new  Scanner(System.in);
+        System.out.print( "Digite o CNPJ: " ); 
+        String cnpj = sc.nextLine();
+        cnpj = cnpj.replaceAll("[^\\d ]", "");
+        if(cnpj.length() < 14){
+            System.out.print( "CNPJ Invalido!" );
+        }
+        if(cnpj.length() == 14){
+            System.out.print("Validando...\n");
+            if(valida_cnpj(cnpj)){
+                System.out.print("CNPJ Valido! :)");
+            }else{
+                System.out.print("CNPJ Invalido! :(");
+            }
+        }
+    }
+}

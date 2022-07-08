@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>To do</title>
+</head>
+<style type="text/css">
+	.card{
+		width: 25%;
+		min-height: 200px;
+		magin-left: 5%;
+		text-align: center;
+		display: inline-block;
+
+	}
+	.no_init{
+		
+		border-left: grey solid 6px;
+		border-right: grey solid 6px;
+		border-radius: 2%;
+	}
+	.start{
+		bo
+		border-left: yellow solid 6px;
+		border-right: yellow solid 6px;
+		border-radius: 2%;
+	}
+	.finalize{
+		b
+		border-left: green solid 6px;
+		border-right: green solid 6px;
+		border-radius: 2%;
+	}
+
+	.centraliza{
+		align-items: center;
+		margin-left: 5%;
+    	display: flex;
+
+    	justify-content: center;
+    	min-height: 200px;
+	}
+	#inicia{
+		margin-left: 24%;
+	}
+	.button-finalize{
+		margin-left: 22%;
+	}
+	body{
+		background: 	#87CEFA;
+	}
+</style>
+<body>
+	<center><h1>Criar Tarefa</h1>
+		<input type="text" name="tarefa" id="tarefa">
+		<button id="envia"> enviar</button><br><hr>
+	</center>
+		<button id="inicia"> Iniciar</button>
+		<button id="finaliza" class="button-finalize"> Finalizar</button><br><br>
+
+	</center>
+	<div class="centraliza">
+	<div class="card no_init">
+		<h4>Não Iniciada</h4>
+		<div id="no_init"></div>
+	</div>
+	<div class="card start">
+		<h4>Iniciada</h4>
+		<div id="start"></div>
+	</div>
+	<div class="card finalize">
+		<h4>Finalizada</h4>
+		<div id="finalize"></div>
+	</div>
+	</div>
+</body>
+<script type="text/javascript">
+	var selecionado = false;
+	var cont = 0;
+	function enviar(){
+		let texto = document.getElementById('tarefa');
+		if(texto.value != ""){
+		 	let array = [];
+		 	if(localStorage.getItem('no_init') != null){
+		 		array = JSON.parse(localStorage.getItem('no_init'));
+		 	}
+		 	console.log(array);
+		 
+		 	array.push(texto.value);
+		 	texto.value = "";
+		 	localStorage.setItem('no_init', JSON.stringify(array));
+		 }
+		 load_data();
+		 
+	}
+	function iniciar(){ 
+		 if(verifica_selecionado()){
+		 	let escolhidos = document.getElementsByTagName("input");
+		 	let array = [];
+		 	if(localStorage.getItem('start') != null){
+		 		array = JSON.parse(localStorage.getItem('start'));
+		 	}
+		 	for(let i = 0; i < escolhidos.length; i++){
+		 		if(escolhidos[i].checked){
+		 			array.push(escolhidos[i].id);
+		 		}
+		 	}
+		 	localStorage.setItem('start', JSON.stringify(array));
+		 	var no_init = JSON.parse(localStorage.getItem('no_init'));
+		 	delete_data(array, no_init, 'no_init');
+		 }else{
+			alert("Nenhuma ou mais de uma tarefa selecionada")
+		 }
+		
+	}
+
+	function finalizar(){
+		if(verifica_selecionado()){
+		 	let escolhidos = document.getElementsByTagName("input");
+		 	let array = [];
+		 	if(localStorage.getItem('finalize') != null){
+		 		array = JSON.parse(localStorage.getItem('finalize'));
+		 	}
+		 	for(let i = 0; i < escolhidos.length; i++){
+		 		if(escolhidos[i].checked){
+		 			array.push(escolhidos[i].id);
+		 		}
+		 	}
+		 	localStorage.setItem('finalize', JSON.stringify(array));
+		 	var start = JSON.parse(localStorage.getItem('start'));
+		 	console.log("pegou no start", start);
+		 	delete_data(array, start ,'start');
+		}else{
+			alert("Nenhuma ou mais de uma tarefa selecionada")
+		}
+	}
+
+	function delete_data(array , array_two, key){
+		console.log("delentando",array[0], key);
+		for(let i = 0; i < array_two.length; i++){
+			if(array_two[i] == array[array.length - 1]){
+				array_two.splice(i,1);
+			}
+			
+		}
+		localStorage.setItem(key, JSON.stringify(array_two));
+		load_data();
+	}
+
+	var button = document.getElementById("envia");
+	button.addEventListener("click",enviar);
+
+	var inicia = document.getElementById("inicia");
+	inicia.addEventListener("click",iniciar);
+
+	var finaliza = document.getElementById("finaliza");
+	finaliza.addEventListener("click",finalizar);
+
+	function remove_ellements(elemento){
+		if(elemento.lastChild != null){
+			while(elemento.lastChild){
+				elemento.removeChild(elemento.lastChild);
+			}
+		}
+		
+	}
+	function load_data(){
+		var no_init = JSON.parse(localStorage.getItem('no_init'));
+		var start = JSON.parse(localStorage.getItem('start'));
+		var finalize = JSON.parse(localStorage.getItem('finalize'));
+
+		var div_no_init = document.getElementById('no_init');
+		var div_start = document.getElementById('start');
+		var div_finalize = document.getElementById('finalize');
+
+		if(no_init != null){
+			remove_ellements(div_no_init);
+			for(let i = 0; i < no_init.length; i++){
+				let p = document.createElement('span');
+				p.innerText = no_init[i];
+				div_no_init.appendChild(p);
+				let br = document.createElement('br');
+				let check = document.createElement('input');
+				check.setAttribute('type','checkbox');
+				check.setAttribute('id',no_init[i]);
+				div_no_init.appendChild(check);
+				div_no_init.appendChild(br);
+			}
+		}
+		
+		if(start != null){
+			console.log("OPA");
+			remove_ellements(div_start);
+			for(let i = 0; i < start.length; i++){
+				let p = document.createElement('span');
+				p.innerText = start[i];
+				div_start.appendChild(p);
+				let br = document.createElement('br');
+				let check = document.createElement('input');
+				check.setAttribute('type','checkbox');
+				check.setAttribute('id',start[i]);
+				div_start.appendChild(check);
+				div_start.appendChild(br);
+			}
+		}	
+		
+		if(finalize != null){
+			remove_ellements(div_finalize);
+			for(let i = 0; i < finalize.length; i++){
+				let p = document.createElement('span');
+				p.innerText = finalize[i];
+				div_finalize.appendChild(p);
+				let br = document.createElement('br');
+				div_finalize.appendChild(br);
+			}
+			
+		}
+	}
+	function verifica_selecionado (){
+		let escolhidos = document.getElementsByTagName("input");
+		cont = 0;
+		for(let i = 0; i < escolhidos.length; i++){
+			if(escolhidos[i].checked == true){
+				cont = cont + 1; 
+			}
+		}
+		console.log("CONT",cont);
+		if(cont === 1){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+	load_data();
+</script>
+</html>
